@@ -4,13 +4,16 @@ import ROLE, { ALL_ROLE } from "../constants/role.js";
 
 const Schema = mongoose.Schema(
   {
-    fullname: {
-      type: String,
-    },
     username: {
       type: String,
     },
     password: {
+      type: String,
+    },
+    email: {
+      type: String,
+    },
+    phone: {
       type: String,
     },
     role: {
