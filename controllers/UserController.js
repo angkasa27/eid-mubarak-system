@@ -11,8 +11,9 @@ const show = async (req, res) => {
     return res.status(200).json({
       status: true,
       data: {
-        fullname: user.fullname,
         username: user.username,
+        enmail: user.enmail,
+        phone: user.phone,
         status: user.status,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,

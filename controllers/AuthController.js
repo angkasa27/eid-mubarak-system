@@ -20,9 +20,8 @@ const generateRefreshToken = async (payload) => {
 
 const register = async (req, res) => {
   try {
-    const { fullname, username, password, retype_password } = req.body;
+    const { username, password, retype_password, email, phone } = req.body;
 
-    if (!fullname) throw { code: 428, message: "fullname is required" };
     if (!username) throw { code: 428, message: "username is required" };
     if (!password) throw { code: 428, message: "password is required" };
     if (!retype_password)
@@ -38,9 +37,10 @@ const register = async (req, res) => {
     let hash = await bcrypt.hash(password, salt);
 
     const newUser = new User({
-      fullname,
       username,
       password: hash,
+      email,
+      phone,
     });
 
     const user = await newUser.save();
@@ -50,9 +50,9 @@ const register = async (req, res) => {
     return res.status(200).json({
       status: true,
       data: {
-        fullname: user.fullname,
         username: user.username,
-        role: user.role,
+        email: user.email,
+        phone: user.phone,
       },
       message: "Berhasil mendaftar, silahkan login!",
     });
@@ -89,7 +89,6 @@ const login = async (req, res) => {
       data: {
         accessToken,
         refreshToken,
-        fullname: user.fullname,
         username,
       },
       message: "LOGIN_SUCCESS",

@@ -12,7 +12,6 @@ const DataSchema = new mongoose.Schema(
 
 const Schema = mongoose.Schema(
   {
-    cardId: mongoose.Schema.Types.ObjectId,
     link: String,
     username: String,
     data: {
@@ -32,7 +31,7 @@ const Schema = mongoose.Schema(
 
 Schema.virtual("users", {
   ref: "User",
-  localField: "userId",
+  localField: "username",
   foreignField: "username",
 });
 

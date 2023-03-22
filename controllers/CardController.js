@@ -1,5 +1,4 @@
 import Card from "../models/Card.js";
-import Image from "../models/Image.js";
 import { isLinkExist } from "../libraries/link.js";
 import { getUsername } from "../libraries/username.js";
 
@@ -31,21 +30,9 @@ const store = async (req, res) => {
 
     if (!card) throw { code: 500, message: "FAIL_ADD_CARD" };
 
-    const newImage = new Image({
-      link,
-      images: [],
-    });
-
-    const image = await newImage.save();
-
-    if (!image) throw { code: 500, message: "FAIL_ADD_IMAGE" };
-
     return res.status(200).json({
       status: true,
-      data: {
-        ...card._doc,
-        images: image?.images,
-      },
+      data: card,
       message: "ADD_CARD_SUCCESS",
     });
   } catch (err) {
@@ -64,14 +51,10 @@ const show = async (req, res) => {
     if (!link) throw { code: 428, message: "link is required" };
 
     const card = await Card.findOne({ link });
-    const image = await Image.findOne({ link });
 
     return res.status(200).json({
       status: true,
-      data: {
-        ...card._doc,
-        images: image?.images,
-      },
+      data: card,
       message: "GET_CARD_SUCCESS",
     });
   } catch (err) {
@@ -109,14 +92,9 @@ const update = async (req, res) => {
 
     if (!card) throw { code: 500, message: "UPDATE_CARD_FAILED" };
 
-    const image = await Image.findOne({ link });
-
     return res.status(200).json({
       status: true,
-      data: {
-        ...card._doc,
-        images: image?.images,
-      },
+      data: card,
       message: "UPDATE_CARD_SUCCESS",
     });
   } catch (err) {
