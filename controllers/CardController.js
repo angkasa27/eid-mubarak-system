@@ -4,13 +4,11 @@ import { getUsername } from "../libraries/username.js";
 
 const store = async (req, res) => {
   try {
-    const { link, data, config, type, theme } = req.body;
+    const { link, data, theme } = req.body;
 
-    if (!type) throw { code: 428, message: "type is required" };
-    if (!theme) throw { code: 428, message: "theme is required" };
     if (!link) throw { code: 428, message: "link is required" };
     if (!data) throw { code: 428, message: "data is required" };
-    if (!config) throw { code: 428, message: "config is required" };
+    if (!theme) throw { code: 428, message: "theme is required" };
 
     let linkExist = await isLinkExist(link);
     if (linkExist) throw { code: 409, message: "LINK_EXIST" };
@@ -19,11 +17,9 @@ const store = async (req, res) => {
 
     const newCard = new Card({
       link,
+      username,
       data,
-      config,
-      type,
       theme,
-      userId: username,
     });
 
     const card = await newCard.save();
@@ -68,11 +64,12 @@ const show = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    if (!req.params.id) throw { code: 428, message: "Id is required" };
+    if (!req.params.link) throw { code: 428, message: "Id is required" };
 
-    const { data, config, type, theme, userId, link } = req.body;
+    const { link, data, theme } = req.body;
 
-    if (!type) throw { code: 428, message: "type is required" };
+    if (!link) throw { code: 428, message: "link is required" };
+    if (!data) throw { code: 428, message: "data is required" };
     if (!theme) throw { code: 428, message: "theme is required" };
 
     const username = await getUsername(req);
@@ -86,9 +83,13 @@ const update = async (req, res) => {
       theme,
     };
 
-    const card = await Card.findByIdAndUpdate(req.params.id, fields, {
-      new: true,
-    });
+    const card = await Card.findOneAndUpdate(
+      { link: req.params.link },
+      fields,
+      {
+        new: true,
+      }
+    );
 
     if (!card) throw { code: 500, message: "UPDATE_CARD_FAILED" };
 
@@ -106,26 +107,4 @@ const update = async (req, res) => {
   }
 };
 
-const index = async (req, res) => {
-  try {
-    const username = await getUsername(req);
-
-    const cards = await Card.find({ userId: username });
-
-    if (!cards) throw { code: 500, message: "Get card failed" };
-
-    return res.status(200).json({
-      status: true,
-      data: cards,
-      total: cards.length,
-    });
-  } catch (err) {
-    if (!err.code) err.code = 500;
-    return res.status(err.code).json({
-      status: false,
-      message: err.message,
-    });
-  }
-};
-
-export default { store, show, update, index };
+export default { store, show, update };
