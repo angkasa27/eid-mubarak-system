@@ -1,8 +1,25 @@
 import mongoose from "mongoose";
 
+const ImageSchema = new mongoose.Schema(
+  {
+    fileId: String,
+    name: String,
+    size: Number,
+    filePath: String,
+    url: String,
+    fileType: String,
+    width: Number,
+    height: Number,
+    tags: [String],
+  },
+  { strict: false }
+);
+
 const DataSchema = new mongoose.Schema(
   {
-    image: String,
+    image: {
+      type: ImageSchema,
+    },
     name: String,
     message: String,
     quotes: String,

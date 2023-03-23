@@ -1,4 +1,5 @@
 import Card from "../models/Card.js";
+import Image from "../models/Image.js";
 import { isLinkExist } from "../libraries/link.js";
 import { getUsername } from "../libraries/username.js";
 
@@ -42,15 +43,16 @@ const store = async (req, res) => {
 
 const show = async (req, res) => {
   try {
-    const { link } = req.params;
+    const { username } = req.params;
 
-    if (!link) throw { code: 428, message: "link is required" };
+    if (!username) throw { code: 428, message: "username is required" };
 
-    const card = await Card.findOne({ link });
+    const card = await Card.findOne({ username });
+    const image = await Image.findOne({ username });
 
     return res.status(200).json({
       status: true,
-      data: card,
+      data: { ...card._doc, image: image },
       message: "GET_CARD_SUCCESS",
     });
   } catch (err) {
@@ -64,32 +66,26 @@ const show = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    if (!req.params.link) throw { code: 428, message: "Id is required" };
+    if (!req.params.username) throw { code: 428, message: "Id is required" };
 
-    const { link, data, theme } = req.body;
+    const { data, theme } = req.body;
 
-    if (!link) throw { code: 428, message: "link is required" };
     if (!data) throw { code: 428, message: "data is required" };
     if (!theme) throw { code: 428, message: "theme is required" };
 
     const username = await getUsername(req);
 
-    if (userId !== username) throw { code: 401, message: "unauthorized" };
+    if (req.params.username !== username)
+      throw { code: 401, message: "unauthorized" };
 
     const fields = {
       data,
-      config,
-      type,
       theme,
     };
 
-    const card = await Card.findOneAndUpdate(
-      { link: req.params.link },
-      fields,
-      {
-        new: true,
-      }
-    );
+    const card = await Card.findOneAndUpdate({ username }, fields, {
+      new: true,
+    });
 
     if (!card) throw { code: 500, message: "UPDATE_CARD_FAILED" };
 

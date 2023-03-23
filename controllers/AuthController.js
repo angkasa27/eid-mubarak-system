@@ -47,14 +47,18 @@ const register = async (req, res) => {
 
     if (!user) throw { code: 500, message: "USER_REGISTER_FAILED" };
 
+    const payload = { _id: user._id, role: user.role, username: user.username };
+    const accessToken = await generateAccessToken(payload);
+    const refreshToken = await generateRefreshToken(payload);
+
     return res.status(200).json({
       status: true,
       data: {
+        accessToken,
+        refreshToken,
         username: user.username,
-        email: user.email,
-        phone: user.phone,
       },
-      message: "Berhasil mendaftar, silahkan login!",
+      message: "Berhasil mendaftar",
     });
   } catch (err) {
     if (!err.code) err.code = 500;
