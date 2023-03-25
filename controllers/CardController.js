@@ -5,11 +5,12 @@ import { getUsername } from "../libraries/username.js";
 
 const store = async (req, res) => {
   try {
-    const { link, data, theme } = req.body;
+    const { link, data, theme, variant } = req.body;
 
     if (!link) throw { code: 428, message: "link is required" };
     if (!data) throw { code: 428, message: "data is required" };
     if (!theme) throw { code: 428, message: "theme is required" };
+    if (!variant) throw { code: 428, message: "variant is required" };
 
     let linkExist = await isLinkExist(link);
     if (linkExist) throw { code: 409, message: "LINK_EXIST" };
@@ -21,6 +22,7 @@ const store = async (req, res) => {
       username,
       data,
       theme,
+      variant,
     });
 
     const card = await newCard.save();
@@ -68,10 +70,11 @@ const update = async (req, res) => {
   try {
     if (!req.params.username) throw { code: 428, message: "Id is required" };
 
-    const { data, theme } = req.body;
+    const { data, theme, variant } = req.body;
 
     if (!data) throw { code: 428, message: "data is required" };
     if (!theme) throw { code: 428, message: "theme is required" };
+    if (!variant) throw { code: 428, message: "variant is required" };
 
     const username = await getUsername(req);
 
@@ -81,6 +84,7 @@ const update = async (req, res) => {
     const fields = {
       data,
       theme,
+      variant,
     };
 
     const card = await Card.findOneAndUpdate({ username }, fields, {

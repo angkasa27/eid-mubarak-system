@@ -35,6 +35,7 @@ const Schema = mongoose.Schema(
       type: DataSchema,
     },
     theme: String,
+    variant: String,
     status: {
       type: String,
       enum: ["active", "inactive"],
