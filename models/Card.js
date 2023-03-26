@@ -22,7 +22,9 @@ const DataSchema = new mongoose.Schema(
     },
     name: String,
     message: String,
-    quotes: String,
+    mainQuotes: String,
+    secondaryQuotes: String,
+    closing: String,
   },
   { strict: false }
 );
