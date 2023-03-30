@@ -25,6 +25,7 @@ const DataSchema = new mongoose.Schema(
     mainQuotes: String,
     secondaryQuotes: String,
     closing: String,
+    music: String,
   },
   { strict: false }
 );
