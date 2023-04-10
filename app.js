@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: "https://eid-mubarak-project.vercel.app",
+    origin: ["http://localhost:3000", "https://eid-mubarak-project.vercel.app"],
   })
 );
 app.use("/", indexRouter);
