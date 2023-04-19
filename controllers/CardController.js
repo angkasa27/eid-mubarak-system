@@ -109,4 +109,25 @@ const updateData = async (req, res) => {
   }
 };
 
-export default { show, updateTheme, updateData };
+const index = async (req, res) => {
+  try {
+    const cards = await Card.find().select("username").exec();
+    if (!cards) throw { code: 500, message: "GET_INDEX_FAILED" };
+
+    const usernames = cards.map((card) => card.username);
+
+    return res.status(200).json({
+      status: true,
+      data: usernames,
+      message: "GET_INDEX_SUCCESS",
+    });
+  } catch (err) {
+    if (!err.code) err.code = 500;
+    return res.status(err.code).json({
+      status: false,
+      message: err.message,
+    });
+  }
+};
+
+export default { show, updateTheme, updateData, index };

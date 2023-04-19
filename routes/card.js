@@ -4,6 +4,7 @@ import { jwtAuth } from "../middlewares/jwtAuth.js";
 
 var router = express.Router();
 
+router.get("/index", CardController.index);
 router.get("/:username", CardController.show);
 router.get("/detail/:username", [jwtAuth()], CardController.show);
 router.put("/theme/:username", [jwtAuth()], CardController.updateTheme);
