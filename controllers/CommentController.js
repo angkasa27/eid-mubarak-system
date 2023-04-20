@@ -1,4 +1,5 @@
 import Comment from "../models/Comment.js";
+import { getUsername } from "../libraries/username.js";
 
 const store = async (req, res) => {
   try {
@@ -58,4 +59,36 @@ const index = async (req, res) => {
   }
 };
 
-export default { store, index };
+const hide = async (req, res) => {
+  try {
+    const username = await getUsername(req);
+    if (req.body.username !== username)
+      throw { code: 401, message: "unauthorized" };
+
+    const { id } = req.params;
+    if (!id) throw { code: 428, message: "Id is required" };
+
+    const comment = await Comment.findByIdAndUpdate(
+      id,
+      { status: "inactive" },
+      {
+        new: true,
+      }
+    );
+
+    if (!comment) throw { code: 500, message: "Gagal Menghapus Komentar" };
+
+    return res.status(200).json({
+      status: true,
+      message: "Berhasil Menghapus Komentar",
+    });
+  } catch (err) {
+    if (!err.code) err.code = 500;
+    return res.status(err.code).json({
+      status: false,
+      message: err.message,
+    });
+  }
+};
+
+export default { store, index, hide };
